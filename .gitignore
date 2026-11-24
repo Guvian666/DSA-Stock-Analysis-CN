@@ -1,0 +1,12 @@
+dist/
+payload/
+node_modules/
+app_unpacked/
+*.exe
+*.blockmap
+*.7z
+.env
+.env.*
+logs/
+data/
+__pycache__/

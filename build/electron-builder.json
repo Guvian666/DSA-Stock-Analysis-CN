@@ -1,0 +1,46 @@
+{
+  "name": "dsa-desktop",
+  "version": "3.35.0",
+  "private": true,
+  "description": "DSA 股票智能分析（本地化定制版）",
+  "author": "Guvian",
+  "build": {
+    "appId": "tech.guvian.dsa",
+    "productName": "DSA 股票智能分析",
+    "electronVersion": "20.18.0",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "DSA-股票智能分析-v${version}-安装包.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "股票智能分析",
+      "uninstallDisplayName": "DSA 股票智能分析 v${version}",
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true,
+      "installerLanguages": [
+        "zh_CN"
+      ],
+      "language": "2052"
+    }
+  },
+  "devDependencies": {
+    "electron-builder": "^26.18.0"
+  }
+}
