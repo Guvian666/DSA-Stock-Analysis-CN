@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>股票智能分析</title>
+    <style>
+      :root {
+        color-scheme: dark light;
+        --bg: #f4f7fb;
+        --bg-secondary: #e8edf5;
+        --panel: rgba(255, 255, 255, 0.88);
+        --text: #172033;
+        --muted: #5e6a7e;
+        --accent: #0ea5c6;
+        --danger-bg: rgba(225, 29, 72, 0.08);
+        --danger-border: rgba(225, 29, 72, 0.32);
+        --danger-text: #b91c3c;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #08080c;
+          --bg-secondary: #131722;
+          --panel: rgba(16, 18, 28, 0.9);
+          --text: #e2e8f0;
+          --muted: #94a3b8;
+          --accent: #38bdf8;
+          --danger-bg: rgba(239, 68, 68, 0.08);
+          --danger-border: rgba(239, 68, 68, 0.4);
+          --danger-text: #fecaca;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Microsoft YaHei", "PingFang SC", "Fira Sans", "IBM Plex Sans", "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top left, var(--bg-secondary), var(--bg) 55%);
+        color: var(--text);
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .panel {
+        width: min(640px, 90vw);
+        background: var(--panel);
+        border: 1px solid color-mix(in srgb, var(--accent) 26%, transparent);
+        border-radius: 16px;
+        padding: 32px 36px;
+        box-shadow: 0 30px 80px rgba(15, 23, 42, 0.18);
+        backdrop-filter: blur(18px);
+      }
+
+      .title {
+        font-size: 24px;
+        margin: 0 0 8px;
+        letter-spacing: 0.4px;
+      }
+
+      .subtitle {
+        margin: 0 0 24px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .status {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      .error {
+        margin-top: 16px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        background: var(--danger-bg);
+        border: 1px solid var(--danger-border);
+        color: var(--danger-text);
+        font-size: 12px;
+        line-height: 1.5;
+        display: none;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+
+      .tips {
+        margin-top: 20px;
+        font-size: 12px;
+        color: rgba(148, 163, 184, 0.8);
+      }
+
+      .footer {
+        margin-top: 22px;
+        padding-top: 14px;
+        border-top: 1px solid color-mix(in srgb, var(--muted) 22%, transparent);
+        font-size: 11px;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+
+      .footer strong {
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.4);
+          opacity: 0.6;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h1 class="title">股票智能分析</h1>
+      <p class="subtitle">正在启动本地分析服务</p>
+      <div class="status">
+        <span class="dot"></span>
+        <span>正在准备后端并加载界面…</span>
+      </div>
+      <p class="tips">首次启动约需 10~20 秒。若长时间无响应，请检查网络连通性与模型配置。</p>
+      <div class="error" id="errorBox"></div>
+      <div class="footer">
+        <div><strong>作者：</strong>Guvian</div>
+        <div><strong>免责声明：</strong>本软件仅供个人学习与研究使用，不构成任何投资建议。股市有风险，投资需谨慎。因使用本软件产生的任何损失，作者不承担责任。</div>
+        <div>内核基于开源项目 ZhuLinsen/daily_stock_analysis（MIT License）。</div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        const error = params.get('error');
+        if (!error) return;
+        const box = document.getElementById('errorBox');
+        if (!box) return;
+        box.textContent = `启动失败：${decodeURIComponent(error)}`;
+        box.style.display = 'block';
+      })();
+    </script>
+  </body>
+</html>

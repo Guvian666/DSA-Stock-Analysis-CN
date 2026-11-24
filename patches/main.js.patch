@@ -1,0 +1,131 @@
+--- a/main.js
++++ b/main.js
+@@ -1,4 +1,4 @@
+-const { app, BrowserWindow, dialog, ipcMain, shell, nativeTheme } = require('electron');
++const { app, BrowserWindow, dialog, ipcMain, shell, nativeTheme, Menu } = require('electron');
+ const path = require('path');
+ const fs = require('fs');
+ const { spawn } = require('child_process');
+@@ -1880,6 +1880,110 @@
+   }
+ });
+ 
++// ===== 本地化定制（Guvian 2026-11-24）：中文菜单 + 关于面板 + 免责声明 =====
++const APP_AUTHOR = 'Guvian';
++const APP_DISPLAY_NAME = '股票智能分析';
++const APP_DISCLAIMER = [
++  '本软件仅供个人学习与研究使用，不构成任何投资建议。',
++  '股市有风险，投资需谨慎。据此操作，风险自担。',
++  '因使用本软件产生的任何直接或间接损失，作者不承担任何责任。',
++].join('\n');
++
++function showAboutDialog() {
++  const detail = [
++    `软件名称：${APP_DISPLAY_NAME}`,
++    `版本：${app.getVersion()}`,
++    `作者：${APP_AUTHOR}`,
++    '',
++    '【免责声明】',
++    APP_DISCLAIMER,
++    '',
++    '内核基于开源项目 ZhuLinsen/daily_stock_analysis（MIT License），',
++    '界面中文本地化与作者信息由 Guvian 定制。',
++  ].join('\n');
++  const options = {
++    type: 'info',
++    title: `关于 ${APP_DISPLAY_NAME}`,
++    message: APP_DISPLAY_NAME,
++    detail,
++    buttons: ['确定'],
++    defaultId: 0,
++    noLink: true,
++  };
++  if (mainWindow && !mainWindow.isDestroyed()) {
++    void dialog.showMessageBox(mainWindow, options);
++  } else {
++    void dialog.showMessageBox(options);
++  }
++}
++
++function installLocalizedMenu() {
++  const isMacHost = process.platform === 'darwin';
++  const template = [
++    ...(isMacHost ? [{ role: 'appMenu' }] : []),
++    {
++      label: '文件',
++      submenu: [
++        {
++          label: '刷新界面',
++          accelerator: 'CmdOrCtrl+R',
++          click: () => {
++            if (mainWindow && !mainWindow.isDestroyed()) mainWindow.reload();
++          },
++        },
++        { type: 'separator' },
++        { label: '退出', role: 'quit' },
++      ],
++    },
++    {
++      label: '编辑',
++      submenu: [
++        { label: '撤销', role: 'undo' },
++        { label: '重做', role: 'redo' },
++        { type: 'separator' },
++        { label: '剪切', role: 'cut' },
++        { label: '复制', role: 'copy' },
++        { label: '粘贴', role: 'paste' },
++        { label: '全选', role: 'selectAll' },
++      ],
++    },
++    {
++      label: '视图',
++      submenu: [
++        { label: '刷新', role: 'reload' },
++        { label: '强制刷新', role: 'forceReload' },
++        { label: '开发者工具', role: 'toggleDevTools' },
++        { type: 'separator' },
++        { label: '实际大小', role: 'resetZoom' },
++        { label: '放大', role: 'zoomIn' },
++        { label: '缩小', role: 'zoomOut' },
++        { type: 'separator' },
++        { label: '全屏', role: 'togglefullscreen' },
++      ],
++    },
++    {
++      label: '窗口',
++      submenu: [
++        { label: '最小化', role: 'minimize' },
++        { label: '关闭窗口', role: 'close' },
++      ],
++    },
++    {
++      label: '帮助',
++      submenu: [
++        { label: '关于本软件', click: showAboutDialog },
++        {
++          label: '查看开源项目主页',
++          click: () => {
++            void shell.openExternal(RELEASES_PAGE_URL);
++          },
++        },
++      ],
++    },
++  ];
++  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
++}
++
+ async function createWindow() {
+   desktopBackendOrigin = '';
+   const restoreResult = isWindowsNsisInstalledApp() ? restorePackagedRuntimeStateFromBackup() : null;
+@@ -2079,7 +2183,10 @@
+   }
+ }
+ 
+-app.whenReady().then(createWindow);
++app.whenReady().then(() => {
++  installLocalizedMenu();
++  return createWindow();
++});
+ 
+ app.on('activate', () => {
+   if (BrowserWindow.getAllWindows().length === 0) {

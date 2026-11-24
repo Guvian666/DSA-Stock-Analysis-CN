@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DSA 股票智能分析 · 使用说明书</title>
+<style>
+  :root{
+    --text:#1c2536; --muted:#5c6b82; --line:#dfe6f0; --bg:#ffffff;
+    --accent:#0b7fa8; --accent-soft:#eaf6fb; --warn-bg:#fff8e6; --warn-line:#f0d48a;
+    --code-bg:#f5f7fa;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:#f2f5f9; color:var(--text);
+    font-family:"Microsoft YaHei","PingFang SC","Segoe UI",sans-serif;
+    font-size:15px; line-height:1.85;
+  }
+  .page{
+    max-width:900px; margin:28px auto; background:var(--bg);
+    padding:52px 60px 64px; border-radius:6px;
+    box-shadow:0 10px 40px rgba(20,35,60,.10);
+  }
+  h1{font-size:29px;margin:0 0 6px;letter-spacing:.5px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 30px}
+  h2{
+    font-size:20px;margin:42px 0 12px;padding-left:12px;
+    border-left:4px solid var(--accent);line-height:1.3;
+  }
+  h3{font-size:16px;margin:24px 0 8px;color:#243149}
+  p{margin:8px 0}
+  ul,ol{margin:8px 0 8px 22px;padding:0}
+  li{margin:5px 0}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  th{background:var(--accent-soft);font-weight:600;white-space:nowrap}
+  code{
+    background:var(--code-bg);border:1px solid var(--line);border-radius:3px;
+    padding:1px 5px;font-family:Consolas,"Courier New",monospace;font-size:13px;
+  }
+  pre{
+    background:var(--code-bg);border:1px solid var(--line);border-radius:5px;
+    padding:12px 14px;overflow-x:auto;font-size:13px;line-height:1.6;
+  }
+  pre code{border:0;background:none;padding:0}
+  .toc{
+    background:var(--accent-soft);border:1px solid var(--line);border-radius:6px;
+    padding:16px 22px;margin:26px 0 8px;
+  }
+  .toc ol{margin:6px 0 0 20px}
+  .toc a{color:var(--accent);text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  .tip{
+    background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:6px;
+    padding:12px 16px;margin:14px 0;font-size:14px;
+  }
+  .step{
+    border-left:3px solid var(--accent);padding:2px 0 2px 16px;margin:18px 0;
+  }
+  .foot{
+    margin-top:46px;padding-top:18px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:12.5px;line-height:1.8;
+  }
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .page{box-shadow:none;margin:0;padding:0;max-width:none}
+    h2{page-break-after:avoid}
+    table,pre{page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>DSA 股票智能分析 · 使用说明书</h1>
+<p class="sub">版本 3.35.0（中文本地化版）　·　适用平台：Windows 10 / 11（64 位）</p>
+
+<div class="toc">
+  <strong>目录</strong>
+  <ol>
+    <li><a href="#what">它是什么</a></li>
+    <li><a href="#can">它能干什么</a></li>
+    <li><a href="#req">运行环境</a></li>
+    <li><a href="#install">安装与首次启动</a></li>
+    <li><a href="#config">三步完成配置（必做）</a></li>
+    <li><a href="#use">怎么做一次分析</a></li>
+    <li><a href="#read">报告怎么看</a></li>
+    <li><a href="#agent">策略问股（进阶）</a></li>
+    <li><a href="#auto">自动分析与推送（可选）</a></li>
+    <li><a href="#limit">数据源与能力边界</a></li>
+    <li><a href="#trouble">常见故障排查</a></li>
+    <li><a href="#uninstall">卸载与数据</a></li>
+  </ol>
+</div>
+
+<h2 id="what">一、它是什么</h2>
+<p>一个跑在你自己电脑上的股票分析工具。你给它股票代码，它去拉行情、K 线、技术指标、公告与新闻，然后让大模型写出一份<strong>「决策仪表盘」</strong>：核心结论、评分、趋势判断、买卖点位、风险提醒、催化因素、操作检查清单。</p>
+<p>三点要说清楚：</p>
+<ul>
+  <li><strong>本地运行</strong>：界面和后端都在你电脑上，行情与报告不经过第三方服务器（只有调用大模型时会联网）。</li>
+  <li><strong>它是助手，不是操盘手</strong>：只做分析与提示，<strong>不会</strong>替你下单、不会接券商账户自动交易。</li>
+  <li><strong>模型可选</strong>：用哪家大模型由你决定，也可以接本地模型完全离线跑（除行情外）。</li>
+</ul>
+
+<h2 id="can">二、它能干什么</h2>
+<table>
+  <tr><th>能力</th><th>具体内容</th></tr>
+  <tr>
+    <td>AI 决策报告</td>
+    <td>核心结论、综合评分（0–100）、趋势判断（看多/震荡/看空）、买卖点位、风险警报、利好催化、操作检查清单</td>
+  </tr>
+  <tr>
+    <td>多市场覆盖</td>
+    <td>A 股、港股、美股、日股、韩股、台股，以及 ETF</td>
+  </tr>
+  <tr>
+    <td>多源数据聚合</td>
+    <td>实时行情、日/周 K 线、均线与技术指标、资金流向、公告、新闻、部分基本面数据</td>
+  </tr>
+  <tr>
+    <td>工作台</td>
+    <td>手动分析、任务进度、历史报告、完整 Markdown 原文、回测、持仓管理、配置管理、浅色/深色主题</td>
+  </tr>
+  <tr>
+    <td>策略问股</td>
+    <td>多轮追问式对话，内置均线金叉、缠论、波浪理论、多头趋势、热点题材、事件驱动、成长质量、预期重估等 15 种策略</td>
+  </tr>
+  <tr>
+    <td>智能导入</td>
+    <td>从图片、CSV / Excel、剪贴板导入自选股；代码、名称、拼音、别名自动补全</td>
+  </tr>
+  <tr>
+    <td>自动推送</td>
+    <td>定时分析并把结果推到企业微信、飞书、Telegram、Discord、Slack 或邮箱（可选，需自行配置）</td>
+  </tr>
+</table>
+
+<h2 id="req">三、运行环境</h2>
+<table>
+  <tr><th>项目</th><th>要求</th></tr>
+  <tr><td>系统</td><td>Windows 10 / 11，64 位</td></tr>
+  <tr><td>内存</td><td>建议 8 GB 以上（启动时峰值约 1 GB）</td></tr>
+  <tr><td>磁盘</td><td>安装约 700 MB，报告与数据库会持续增长</td></tr>
+  <tr><td>网络</td><td>需要联网（拉行情、调用大模型）；公司内网若有严格出网管控可能拉不到行情</td></tr>
+  <tr><td>其他</td><td>不需要单独安装 Python、Node.js，安装包已自带运行环境</td></tr>
+</table>
+
+<h2 id="install">四、安装与首次启动</h2>
+<div class="step">
+  <p><strong>1. 运行安装包</strong>：双击 <code>DSA-股票智能分析-v3.35.0-安装包.exe</code>。</p>
+  <p><strong>2. 选择安装位置</strong>：默认装在当前用户目录（不需要管理员权限）。可以改到 D 盘等非系统盘，但<strong>不要</strong>选 <code>C:\Program Files</code>、<code>C:\Windows</code> 这类受保护目录。</p>
+  <p><strong>3. 完成安装</strong>：勾选「创建桌面快捷方式」后，桌面会出现<strong>「股票智能分析」</strong>图标，开始菜单同目录也有一份。</p>
+</div>
+<p>首次双击启动时，窗口会先显示一个启动页：</p>
+<pre><code>股票智能分析
+正在启动本地分析服务
+正在准备后端并加载界面…</code></pre>
+<p>这一步需要 <strong>10~20 秒</strong>（后端要初始化数据库、加载策略与行情源）。期间看起来像卡住是正常现象，<strong>请不要反复点关闭</strong>。加载完成后会自动进入主界面。</p>
+<div class="tip">
+  <strong>不要关掉的进程：</strong>桌面版是「外壳 + 后台服务」两层，后台服务随外壳一起启动/退出。
+  关掉主窗口等于结束整个程序；分析任务会中断。想让它长期常驻（比如配合定时任务），就别关窗口，也别让电脑睡眠。
+</div>
+
+<h2 id="config">五、三步完成配置（必做）</h2>
+<p>刚装好时，程序能打开、能看界面，但<strong>点「分析」会报错</strong>——因为它还没有大模型。三步补齐即可。</p>
+
+<h3>第 1 步：配置大模型（唯一必填项）</h3>
+<p>进入 <strong>系统设置 → AI 模型 / LLM 渠道</strong>，选一个服务商填 Key。最省事的是 DeepSeek（国内直连、按量付费、单价很低）：</p>
+<ol>
+  <li>打开 <code>platform.deepseek.com</code>，注册并创建 API Key（<code>sk-</code> 开头）。</li>
+  <li>在设置页选择 <strong>DeepSeek</strong>，把 Key 粘进去，模型填 <code>deepseek-v4-flash</code>。</li>
+  <li>点<strong>保存</strong>，再点<strong>测试渠道</strong>，看到「通过 / succeeded」就说明通了。</li>
+</ol>
+<p>也支持其他方式：</p>
+<ul>
+  <li><strong>任意 OpenAI 兼容接口</strong>（中转站、自建网关、通义、Kimi 等）：填 <code>Base URL</code> + Key + 模型名即可。</li>
+  <li><strong>本地模型</strong>：装好 Ollama 并拉一个模型，渠道选 Ollama，地址 <code>http://localhost:11434</code>，无需 Key、零成本。</li>
+</ul>
+
+<h3>第 2 步：填自选股</h3>
+<p><strong>系统设置 → 基础配置 → 自选股</strong>，按 <code>600519,000001,hk00700,AAPL</code> 这种格式填，逗号分隔。也可以在首页搜索框里逐只添加。</p>
+
+<h3>第 3 步（建议）：补一个新闻搜索源</h3>
+<p>不配也能跑，但报告里的「舆情 / 公告 / 催化因素」会是空的，因为程序没有搜新闻的能力。配一个即可，比如 Tavily、博查（Bocha）、SerpAPI 或 Brave 的 Key。自建 SearXNG 也可以。</p>
+<div class="tip">
+  <strong>判断是否配好了：</strong>打开「系统设置」，看体检清单。所有<strong>必填项</strong>都变绿（主渠道、自选股、数据库），就可以开始分析了。
+</div>
+
+<h2 id="use">六、怎么做一次分析</h2>
+<div class="step">
+  <p><strong>1.</strong> 首页搜索框输入<strong>股票代码或名称</strong>（支持拼音首字母，如 <code>dfjm</code> → 东方精工），选中目标。</p>
+  <p><strong>2.</strong> 点<strong>「开始分析」</strong>。任务会进入队列，右侧能看到进度条（0→100）。</p>
+  <p><strong>3.</strong> 等待 <strong>1~3 分钟</strong>（取决于行情源速度与模型响应）。期间可以做别的事，进度会持续刷新。</p>
+  <p><strong>4.</strong> 完成后自动跳到报告页，同时写入<strong>历史报告</strong>。报告可以复制、导出 Markdown、发到通知渠道。</p>
+</div>
+<p><strong>几个实用操作：</strong></p>
+<ul>
+  <li><strong>批量分析</strong>：在分析页可以一次勾选多只，程序按并发上限（默认 3）排队跑。</li>
+  <li><strong>强制刷新</strong>：勾上「强制刷新」会忽略缓存，重新抓全部数据；不勾则优先用库里已有数据，速度快很多。</li>
+  <li><strong>大盘复盘</strong>：单独一个入口，输出指数、涨跌家数、板块领涨领跌，不发个股报告。</li>
+  <li><strong>看历史</strong>：「历史报告」按时间倒序列出所有做过的分析，点进去看完整 Markdown 原文。</li>
+</ul>
+
+<h2 id="read">七、报告怎么看</h2>
+<table>
+  <tr><th>字段</th><th>含义</th><th>使用建议</th></tr>
+  <tr>
+    <td>综合评分</td>
+    <td>0–100，模型对当前技术面与消息面的整体打分</td>
+    <td>只是参考刻度，<strong>不是</strong>买入阈值。60 分以上通常偏正面，40 以下偏负面</td>
+  </tr>
+  <tr>
+    <td>趋势判断</td>
+    <td>看多 / 震荡 / 看空</td>
+    <td>跟均线排列、量能配合一起看，别单独依赖</td>
+  </tr>
+  <tr>
+    <td>操作建议</td>
+    <td>买入 / 观望 / 卖出 / 减仓 / 持有</td>
+    <td>结合你自己的成本位和仓位，报告不知道你的持仓成本</td>
+  </tr>
+  <tr>
+    <td>买卖点位</td>
+    <td>模型给出的参考支撑、压力、止损位</td>
+    <td>当作<strong>纪律线</strong>用：跌破就按纪律办，而不是找理由改线</td>
+  </tr>
+  <tr>
+    <td>风险警报</td>
+    <td>资金流出、筹码集中度过高、违规记录、解禁等</td>
+    <td>这一栏往往比结论更有价值，逐条看</td>
+  </tr>
+  <tr>
+    <td>利好催化</td>
+    <td>业绩预增、订单、政策、行业景气等</td>
+    <td>注意区分「已兑现」与「预期」，前者常已price in</td>
+  </tr>
+  <tr>
+    <td>操作检查清单</td>
+    <td>下单前该确认的事项</td>
+    <td>照着过一遍，能挡掉不少冲动交易</td>
+  </tr>
+</table>
+<div class="tip">
+  <strong>报告里出现「新闻/筹码/财报数据缺失」不是模型偷懒</strong>，而是对应数据源没配或没抓到时，模型的诚实声明。
+  这类报告的结论应当降权看待。
+</div>
+
+<h2 id="agent">八、策略问股（进阶）</h2>
+<p>报告是一次性的，问股是对话式的。进入 <strong>策略问股</strong> 页面，选一个策略（如「均线金叉」「缠论」「热点题材」），然后像聊天一样追问：</p>
+<pre><code>这只票现在符合你选的策略吗？
+如果我按你说的止损位挂单，风险有多大？
+换成同板块的另一只，哪个位置更好？</code></pre>
+<p>它支持多轮上下文、可导出会话、可把结论发到通知渠道。问股用的模型默认继承主渠道，也可以在设置里单独指定一个更便宜的模型。</p>
+
+<h2 id="auto">九、自动分析与推送（可选）</h2>
+<p>不想每天手动点，可以让它自己跑：</p>
+<ol>
+  <li><strong>系统设置 → 通知渠道</strong>：配一个推送出口。企业微信群机器人最简单（填 Webhook URL 即可），邮件需要发件邮箱与授权码。</li>
+  <li><strong>系统设置 → 定时任务</strong>：设置每天的运行时间（如工作日 18:00）。</li>
+  <li>前提是<strong>程序得在运行</strong>——桌面版关掉窗口就停了。要长期无人值守，建议用本目录里的<strong>浏览器版启动脚本</strong>配合 Windows 任务计划，或干脆放到一台常开的小主机上。</li>
+</ol>
+
+<h2 id="limit">十、数据源与能力边界</h2>
+<table>
+  <tr><th>项目</th><th>说明</th></tr>
+  <tr>
+    <td>默认行情源</td>
+    <td>AkShare、Baostock、YFinance 等<strong>免费源</strong>，零配置可用。但免费源受上游限流与接口变动影响，稳定性不保证</td>
+  </tr>
+  <tr>
+    <td>更稳的方案</td>
+    <td>配置 Tushare（A 股）、TickPlus（A 股/ETF）、Longbridge（港美股）等 token 型数据源</td>
+  </tr>
+  <tr>
+    <td>抓不到数据的典型表现</td>
+    <td>日志里出现 <code>RemoteDisconnected</code>、<code>Max retries exceeded</code>；分析变慢或降级</td>
+  </tr>
+  <tr>
+    <td>实时性</td>
+    <td>免费源通常是<strong>延迟行情</strong>，不要拿它当分时做 T 的决策依据</td>
+  </tr>
+  <tr>
+    <td>模型能力边界</td>
+    <td>模型不掌握你的成本、仓位、资金计划；也不了解你的风险偏好。这些必须你自己加进去</td>
+  </tr>
+</table>
+
+<h2 id="trouble">十一、常见故障排查</h2>
+<table>
+  <tr><th>现象</th><th>原因与处理</th></tr>
+  <tr>
+    <td>启动页停很久（20 秒以上）</td>
+    <td>多为网络慢：程序在等行情源和模型价格表。断网也能起，但会慢。反复卡死再查安装目录 <code>logs\desktop.log</code></td>
+  </tr>
+  <tr>
+    <td>点分析报「LLM API Key 未配置」</td>
+    <td>模型 Key 没填或没保存。回设置页确认「测试渠道」通过</td>
+  </tr>
+  <tr>
+    <td>提示端口 8000 被占用</td>
+    <td>已有一份在跑。桌面版会自动改用 8000–8100 之间的空闲端口；浏览器版需要先关掉占用者</td>
+  </tr>
+  <tr>
+    <td>界面是英文</td>
+    <td>点界面上的 <code>EN / 中</code> 语言切换按钮。语言选择记在本地，换台电脑默认中文</td>
+  </tr>
+  <tr>
+    <td>报告里新闻、公告全是空的</td>
+    <td>没配搜索源。设置页补一个 Tavily / Bocha / SerpAPI</td>
+  </tr>
+  <tr>
+    <td>分析到一半失败</td>
+    <td>看历史报告详情里的错误信息；常见是行情源全挂或模型超时。重试一次，仍失败就换数据源或换模型</td>
+  </tr>
+  <tr>
+    <td>报告存在哪</td>
+    <td>安装目录下的 <code>data\stock_analysis.db</code>（历史记录）与 <code>resources\backend\stock_analysis\_internal\reports\</code>（Markdown 原文）</td>
+  </tr>
+</table>
+
+<h2 id="uninstall">十二、卸载与数据</h2>
+<ul>
+  <li><strong>卸载</strong>：Windows「设置 → 应用 → 已安装的应用」里找到「DSA 股票智能分析」，点卸载。</li>
+  <li><strong>数据默认保留</strong>：卸载<strong>不会</strong>删掉 <code>data</code>、<code>logs</code> 与 <code>.env</code>，重装后历史报告还在。要彻底清干净需手动删除安装目录。</li>
+  <li><strong>迁移</strong>：把整个安装目录复制到新机器即可带走配置与历史（模型 Key 在 <code>.env</code> 里，是明文，复制前想清楚）。</li>
+</ul>
+
+<div class="foot">
+  <p><strong>免责声明</strong>　本软件仅供个人学习与研究使用，不构成任何投资建议。股市有风险，投资需谨慎。因使用本软件产生的任何直接或间接损失，作者不承担任何责任。</p>
+  <p><strong>来源说明</strong>　内核基于开源项目 ZhuLinsen/daily_stock_analysis（MIT License）；中文本地化、界面与作者信息由 Guvian 定制。</p>
+  <p>DSA 股票智能分析 v3.35.0　·　说明书版本 2026-11-24</p>
+</div>
+
+</div>
+</body>
+</html>
